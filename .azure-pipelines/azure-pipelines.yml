@@ -1,6 +1,5 @@
 name: ML Workspace Infrastructure - $(date:yyyyMMdd)
 
-
 trigger:
   - main
 
@@ -33,7 +32,6 @@ stages:
     - task: TerraformTaskV2@2
       inputs:
         provider: 'azurerm'
-        # command: 'init'
         backendType: 'azurerm'
         backendServiceArm: 'ado_ml'
         backendAzureRmResourceGroupName: '$(backend_resource_group_name)'
@@ -48,7 +46,7 @@ stages:
         command: 'plan'
         workingDirectory: 'IaC'
         environmentServiceName: 'ado_ml'
-  jobs:      
+
   - job: WaitForValidation
     displayName: 'Wait for validation'
     pool: server
@@ -60,11 +58,15 @@ stages:
       inputs:
         instructions: 'Verify TF plan'
         onTimeout: 'reject'
-  jobs:
+
   - job: ApplyTerraform
     displayName: 'Apply terraform code'
     pool:
       vmImage: 'ubuntu-latest'
+    dependsOn: 
+      - BuildInfrastructure
+      - WaitForValidation
+    condition: and(succeeded('BuildInfrastructure'), succeeded('WaitForValidation'))
     steps:
     - task: TerraformTaskV2@2
       inputs:
