@@ -1,3 +1,6 @@
+name: ML Workspace Infrastructure - $(date:yyyyMMdd)
+
+
 trigger:
   - main
 
