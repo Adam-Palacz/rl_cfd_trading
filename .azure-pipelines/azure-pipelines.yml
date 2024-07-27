@@ -60,7 +60,12 @@ stages:
       inputs:
         instructions: 'Verify TF plan'
         onTimeout: 'reject'
-        
+
+  - job: ApplyTerraform
+    displayName: 'Apply terraform code'
+    pool:
+      vmImage: 'ubuntu-latest'
+
     - task: TerraformTaskV2@2
       inputs:
         provider: 'azurerm'
