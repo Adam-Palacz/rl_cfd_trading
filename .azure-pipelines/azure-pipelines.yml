@@ -49,10 +49,17 @@ stages:
         workingDirectory: 'IaC'
         environmentServiceName: 'ado_ml'
         
+  - job: WaitForValidation
+    displayName: 'Wait for validation'
+    pool: server
+    timeoutInMinutes: 1440
+
+    steps:
     - task: ManualValidation@0
+      timeoutInMinutes: 1440
       inputs:
-        instructions: 'Please manually validate the Terraform plan before applying.'
-        timeoutInMinutes: 120
+        instructions: 'Verify TF plan'
+        onTimeout: 'reject'
         
     - task: TerraformTaskV2@2
       inputs:
