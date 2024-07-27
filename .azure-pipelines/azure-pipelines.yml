@@ -1,0 +1,36 @@
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+parameters:
+  buildMLWorkspace:
+    type: boolean
+    default: false
+
+stages:
+- stage: BuildInfra
+  condition: ${{ parameters.buildMLWorkspace }}
+  jobs:
+  - job: BuildInfrastructure
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: TerraformInstaller@0
+      inputs:
+        terraformVersion: 'latest'
+
+    - task: TerraformTaskV2@2
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: 'IaC'
+
+    - task: TerraformTaskV2@2
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        workingDirectory: 'IaC'
+        environmentServiceName: 'AzureServiceConnection'
+
