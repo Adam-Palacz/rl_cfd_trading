@@ -1,13 +1,13 @@
 trigger:
   - main
 
-pool:
-  vmImage: 'ubuntu-latest'
-
 parameters:
   - name: buildMLWorkspace
     type: boolean
     default: false
+
+variables:
+  - group: terraform-backend-config
 
 stages:
 - stage: BuildInfra
@@ -25,6 +25,12 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'init'
+        backendType: 'azurerm'
+        backendServiceArm: 'AzureServiceConnection'
+        backendAzureRmResourceGroupName: '$(backend_resource_group_name)'
+        backendAzureRmStorageAccountName: '$(backend_storage_account_name)'
+        backendAzureRmContainerName: '$(backend_container_name)'
+        backendAzureRmKey: '$(backend_key)'
         workingDirectory: 'IaC'
 
     - task: TerraformTaskV2@2
