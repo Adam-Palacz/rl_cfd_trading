@@ -50,6 +50,8 @@ stages:
   - job: WaitForValidation
     displayName: 'Wait for validation'
     pool: server
+    dependsOn: 
+      - BuildInfrastructure
     timeoutInMinutes: 1440
 
     steps:
