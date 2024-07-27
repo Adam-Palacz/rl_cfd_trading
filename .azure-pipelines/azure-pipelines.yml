@@ -28,6 +28,12 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'init'
+        workingDirectory: 'IaC'
+
+    - task: TerraformTaskV2@2
+      inputs:
+        provider: 'azurerm'
+        # command: 'init'
         backendType: 'azurerm'
         backendServiceArm: 'ado_ml'
         backendAzureRmResourceGroupName: '$(backend_resource_group_name)'
@@ -39,6 +45,18 @@ stages:
     - task: TerraformTaskV2@2
       inputs:
         provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: 'IaC'
+        environmentServiceName: 'ado_ml'
+        
+    - task: ManualValidation@0
+      inputs:
+        instructions: 'Please manually validate the Terraform plan before applying.'
+        timeoutInMinutes: 120
+        
+    - task: TerraformTaskV2@2
+      inputs:
+        provider: 'azurerm'
         command: 'apply'
         workingDirectory: 'IaC'
-        environmentServiceName: 'AzureServiceConnection'
+        environmentServiceName: 'ado_ml'
