@@ -48,7 +48,7 @@ stages:
         command: 'plan'
         workingDirectory: 'IaC'
         environmentServiceName: 'ado_ml'
-        
+  jobs:      
   - job: WaitForValidation
     displayName: 'Wait for validation'
     pool: server
@@ -60,7 +60,7 @@ stages:
       inputs:
         instructions: 'Verify TF plan'
         onTimeout: 'reject'
-
+  jobs:
   - job: ApplyTerraform
     displayName: 'Apply terraform code'
     pool:
