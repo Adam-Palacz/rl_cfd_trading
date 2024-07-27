@@ -5,7 +5,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 parameters:
-  buildMLWorkspace:
+  - name: buildMLWorkspace
     type: boolean
     default: false
 
@@ -33,4 +33,3 @@ stages:
         command: 'apply'
         workingDirectory: 'IaC'
         environmentServiceName: 'AzureServiceConnection'
-
