@@ -26,7 +26,7 @@ stages:
         provider: 'azurerm'
         command: 'init'
         backendType: 'azurerm'
-        backendServiceArm: 'AzureServiceConnection'
+        backendServiceArm: 'ado_ml'
         backendAzureRmResourceGroupName: '$(backend_resource_group_name)'
         backendAzureRmStorageAccountName: '$(backend_storage_account_name)'
         backendAzureRmContainerName: '$(backend_container_name)'
