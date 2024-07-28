@@ -83,4 +83,9 @@ stages:
         provider: 'azurerm'
         command: 'apply'
         workingDirectory: 'IaC'
-        environmentServiceName: 'ado_ml'
+        environmentServiceNameAzureRM: 'ado_ml'
+        commandOptions: >-
+          -var="arm_client_id=$(ARM_CLIENT_ID)"
+          -var="arm_client_secret=$(ARM_CLIENT_SECRET)"
+          -var="arm_tenant_id=$(ARM_TENANT_ID)"
+          -var="arm_subscription_id=$(ARM_SUBSCRIPTION_ID)"
