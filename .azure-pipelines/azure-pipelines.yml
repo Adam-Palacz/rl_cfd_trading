@@ -40,18 +40,20 @@ stages:
         workingDirectory: 'IaC'
 
 
-    - task: TerraformTaskV4@4
-      displayName: 'Terraform Plan'
+    - task: AzureCLI@2
       inputs:
-        provider: 'azurerm'
-        command: 'plan'
+        azureSubscription: 'ado_ml'
+        scriptType: 'bash'
         workingDirectory: 'IaC'
-        environmentServiceNameAzureRM: 'ado_ml'
-        commandOptions: >-
-          -var="ARM_CLIENT_ID=$(ARM_CLIENT_ID)"
-          -var="ARM_CLIENT_SECRET=$(ARM_CLIENT_SECRET)"
-          -var="ARM_TENANT_ID=$(ARM_TENANT_ID)"
-          -var="ARM_SUBSCRIPTION_ID=$(ARM_SUBSCRIPTION_ID)"
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          export ARM_CLIENT_ID='$(ARM_CLIENT_ID)'
+          export ARM_CLIENT_SECRET='$(ARM_CLIENT_SECRET)'
+          export ARM_TENANT_ID='$(ARM_TENANT_ID)'
+          export ARM_SUBSCRIPTION_ID='$(ARM_SUBSCRIPTION_ID)' 
+              
+          # Run Terraform plan
+          terraform plan
 
   - job: WaitForValidation
     displayName: 'Wait for validation'
@@ -110,3 +112,53 @@ stages:
 #         backendAzureRmContainerName: '$(backend_container_name)'
 #         backendAzureRmKey: 'terraform.tfstate'
 #         workingDirectory: 'IaC'
+
+#     - task: AzureCLI@2
+#       inputs:
+#         azureSubscription: 'ado_ml'
+#         scriptType: 'bash'
+#         workingDirectory: 'IaC'
+#         scriptLocation: 'inlineScript'
+#         inlineScript: |
+#           export ARM_CLIENT_ID='$(ARM_CLIENT_ID)'
+#           export ARM_CLIENT_SECRET='$(ARM_CLIENT_SECRET)'
+#           export ARM_TENANT_ID='$(ARM_TENANT_ID)'
+#           export ARM_SUBSCRIPTION_ID='$(ARM_SUBSCRIPTION_ID)' 
+              
+#           # Run Terraform plan
+#           terraform plan 
+
+#   - job: WaitForValidation
+#     displayName: 'Wait for validation'
+#     pool: server
+#     dependsOn: 
+#       - BuildInfrastructure
+#     timeoutInMinutes: 1440
+
+#     steps:
+#     - task: ManualValidation@0
+#       timeoutInMinutes: 1440
+#       inputs:
+#         instructions: 'Verify TF plan'
+#         onTimeout: 'reject'
+
+#   - job: ApplyTerraform
+#     displayName: 'Apply terraform code'
+#     pool:
+#       vmImage: 'ubuntu-latest'
+#     dependsOn: 
+#       - DestroyInfrastructure
+#       - WaitForValidation
+#     condition: and(succeeded('DestroyInfrastructure'), succeeded('WaitForValidation'))
+#     steps:
+#     - task: TerraformTaskV4@4
+#       inputs:
+#         provider: 'azurerm'
+#         command: 'destroy'
+#         workingDirectory: 'IaC'
+#         environmentServiceNameAzureRM: 'ado_ml'
+#         commandOptions: >-
+#           -var="ARM_CLIENT_ID=$(ARM_CLIENT_ID)"
+#           -var="ARM_CLIENT_SECRET=$(ARM_CLIENT_SECRET)"
+#           -var="ARM_TENANT_ID=$(ARM_TENANT_ID)"
+#           -var="ARM_SUBSCRIPTION_ID=$(ARM_SUBSCRIPTION_ID)"
