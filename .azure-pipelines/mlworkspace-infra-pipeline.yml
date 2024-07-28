@@ -75,7 +75,7 @@ stages:
     - script: |
       pip install checkov terrascan
       checkov -d $(System.DefaultWorkingDirectory)/IaC -o cli
-    displayName: 'Run Checkov'
+    # displayName: 'Run Checkov'
 
 
   - job: WaitForValidation
