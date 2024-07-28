@@ -53,7 +53,7 @@ stages:
           
           terraform plan
 
-  - job: Checkov/Terrascan
+  - job: CheckovAndTerrascan
     displayName: 'Terraform code analysis'
     pool:
       vmImage: 'ubuntu-latest'
