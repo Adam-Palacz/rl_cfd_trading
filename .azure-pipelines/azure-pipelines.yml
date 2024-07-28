@@ -23,18 +23,30 @@ stages:
       inputs:
         terraformVersion: 'latest'
 
-    - task: TerraformTaskV2@2
+    - task: TerraformTaskV4@4
       displayName: "Terraform Init"
       inputs:
         provider: 'azurerm'
         command: 'init'
-        backendType: 'azurerm'
         backendServiceArm: 'ado_ml'
-        backendAzureRmResourceGroupName: '$(backend_resource_group_name)'
-        backendAzureRmStorageAccountName: '$(backend_storage_account_name)'
-        backendAzureRmContainerName: '$(backend_container_name)'
+        backendAzureRmResourceGroupName: 'rg-euw-gbl'
+        backendAzureRmStorageAccountName: 'saeuwgbl'
+        backendAzureRmContainerName: 'ado-ml'
         backendAzureRmKey: 'terraform.tfstate'
         workingDirectory: 'IaC'
+
+    # - task: TerraformTaskV2@2
+    #   displayName: "Terraform Init"
+    #   inputs:
+    #     provider: 'azurerm'
+    #     command: 'init'
+    #     backendType: 'azurerm'
+    #     backendServiceArm: 'ado_ml'
+    #     backendAzureRmResourceGroupName: '$(backend_resource_group_name)'
+    #     backendAzureRmStorageAccountName: '$(backend_storage_account_name)'
+    #     backendAzureRmContainerName: '$(backend_container_name)'
+    #     backendAzureRmKey: 'terraform.tfstate'
+    #     workingDirectory: 'IaC'
 
     - task: TerraformTaskV2@2
       inputs:
