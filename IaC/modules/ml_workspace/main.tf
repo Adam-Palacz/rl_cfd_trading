@@ -20,10 +20,39 @@ resource "azurerm_key_vault" "ml_workspace_kv" {
   resource_group_name = azurerm_resource_group.ml_workspace_rg.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
   sku_name            = var.key_vault_sku_name
+}
 
-  logging {
-    enabled          = true
-    retention_days   = 7
+resource "azurerm_log_analytics_workspace" "kv_ml_workspace_la" {
+  name                = "kv-ml-workspace-log-analytics"
+  location            = azurerm_resource_group.ml_workspace_rg.location
+  resource_group_name = azurerm_resource_group.ml_workspace_rg.name
+  sku                 = "PerGB2018"
+  retention_in_days   = 7
+}
+
+resource "azurerm_monitor_diagnostic_setting" "key_vault_logs" {
+  name               = "key-vault-logs"
+  target_resource_id = azurerm_key_vault.ml_workspace_kv.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.kv_ml_workspace_la.id
+
+  log {
+    category = "AuditEvent"
+    enabled  = true
+
+    retention_policy {
+      enabled = true
+      days    = 7
+    }
+  }
+
+  metric {
+    category = "AllMetrics"
+    enabled  = true
+
+    retention_policy {
+      enabled = true
+      days    = 7
+    }
   }
 }
 
