@@ -49,14 +49,7 @@ stages:
         workingDirectory: 'IaC'
         scriptLocation: 'inlineScript'
         inlineScript: |
-          # Set environment variables for Terraform
-          export ARM_CLIENT_ID=$(az account show --query id -o tsv)
-          export ARM_CLIENT_SECRET=$(az account show --query password -o tsv)
-          export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
-          export ARM_TENANT_ID=$(az account show --query tenantId -o tsv)
-          
-          # Initialize Terraform
-          terraform init
+          az login --service-principal -u ARM_CLIENT_ID -p ARM_CLIENT_SECRET --tenant ARM_TENANT_ID
           
           # Run Terraform plan
           terraform plan -out=tfplan
