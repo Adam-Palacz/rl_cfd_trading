@@ -19,10 +19,6 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
     steps:
-    - task: AzureLogin@1
-      inputs:
-        creds: 'ado_ml'
-        
     - task: TerraformInstaller@0
       inputs:
         terraformVersion: 'latest'
