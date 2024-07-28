@@ -32,31 +32,15 @@ stages:
         backendAzureRmResourceGroupName: '$(backend_resource_group_name)'
         backendAzureRmStorageAccountName: '$(backend_storage_account_name)'
         backendAzureRmContainerName: '$(backend_container_name)'
-        # backendAzureRmResourceGroupName: 'rg-euw-gbl'
-        # backendAzureRmStorageAccountName: 'saeuwgbl'
-        # backendAzureRmContainerName: 'ado-ml'
         backendAzureRmKey: 'terraform.tfstate'
         workingDirectory: 'IaC'
 
-    # - task: TerraformTaskV2@2
-    #   displayName: "Terraform Init"
-    #   inputs:
-    #     provider: 'azurerm'
-    #     command: 'init'
-    #     backendType: 'azurerm'
-    #     backendServiceArm: 'ado_ml'
-    #     backendAzureRmResourceGroupName: '$(backend_resource_group_name)'
-    #     backendAzureRmStorageAccountName: '$(backend_storage_account_name)'
-    #     backendAzureRmContainerName: '$(backend_container_name)'
-    #     backendAzureRmKey: 'terraform.tfstate'
-    #     workingDirectory: 'IaC'
-
-    - task: TerraformTaskV2@2
+    - task: TerraformTaskV4@4
       inputs:
         provider: 'azurerm'
         command: 'plan'
         workingDirectory: 'IaC'
-        environmentServiceName: 'ado_ml'
+        environmentServiceNameAzureRM: 'ado_ml'
 
   - job: WaitForValidation
     displayName: 'Wait for validation'
@@ -81,7 +65,7 @@ stages:
       - WaitForValidation
     condition: and(succeeded('BuildInfrastructure'), succeeded('WaitForValidation'))
     steps:
-    - task: TerraformTaskV2@2
+    - task: TerraformTaskV4@4
       inputs:
         provider: 'azurerm'
         command: 'apply'
