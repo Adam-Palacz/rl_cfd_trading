@@ -68,9 +68,9 @@ resource "azurerm_storage_account" "ml_workspace_storage" {
   #   ip_rules       = []
   #   virtual_network_subnet_ids = []
   # }
-  sas_policy {
-    expiration_period = "P30D"
-  }
+  # sas_policy {
+  #   expiration_period = "P30D"
+  # }
 }
 
 resource "azurerm_machine_learning_workspace" "ml_workspace" {
