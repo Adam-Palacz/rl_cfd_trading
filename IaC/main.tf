@@ -1,3 +1,7 @@
+data "azurerm_subscription" "current" {}
+
+data "azurerm_client_config" "current" {}
+
 module "ml_workspace" {
   source                              = "./modules/ml_workspace"
   resource_group_name                 = var.resource_group_name
