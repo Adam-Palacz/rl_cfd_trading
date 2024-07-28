@@ -42,22 +42,18 @@ stages:
     #     command: 'plan'
     #     workingDirectory: 'IaC'
     #     environmentServiceNameAzureRM: 'ado_ml'
-    - task: AzureCLI@2
+    - task: TerraformTaskV4@4
+      displayName: 'Terraform Plan'
       inputs:
-        azureSubscription: 'ado_ml'
-        scriptType: 'bash'
+        provider: 'azurerm'
+        command: 'plan'
         workingDirectory: 'IaC'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          export ARM_CLIENT_ID='$(ARM_CLIENT_ID)'
-          export ARM_CLIENT_SECRET='$(ARM_CLIENT_SECRET)'
-          export ARM_TENANT_ID='$(ARM_TENANT_ID)'
-          export ARM_SUBSCRIPTION_ID='$(ARM_SUBSCRIPTION_ID)' 
-          # az account set --subscription='$(ARM_SUBSCRIPTION_ID)'
-          # az login --service-principal -u '$(ARM_CLIENT_ID)' -p '$(ARM_CLIENT_SECRET)' --tenant '$(ARM_TENANT_ID)'
-          
-          # Run Terraform plan
-          terraform plan -out=tfplan
+        environmentServiceNameAzureRM: 'ado_ml'
+        commandOptions: >-
+          -var="arm_client_id=$(ARM_CLIENT_ID)"
+          -var="arm_client_secret=$(ARM_CLIENT_SECRET)"
+          -var="arm_tenant_id=$(ARM_TENANT_ID)"
+          -var="arm_subscription_id=$(ARM_SUBSCRIPTION_ID)"
 
   - job: WaitForValidation
     displayName: 'Wait for validation'
