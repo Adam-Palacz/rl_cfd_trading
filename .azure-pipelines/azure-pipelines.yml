@@ -46,6 +46,7 @@ stages:
       inputs:
         azureSubscription: 'ado_ml'
         scriptType: 'bash'
+        workingDirectory: 'IaC'
         scriptLocation: 'inlineScript'
         inlineScript: 'terraform plan'
 
