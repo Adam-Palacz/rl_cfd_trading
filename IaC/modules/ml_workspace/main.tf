@@ -27,7 +27,7 @@ resource "azurerm_log_analytics_workspace" "kv_ml_workspace_la" {
   location            = azurerm_resource_group.ml_workspace_rg.location
   resource_group_name = azurerm_resource_group.ml_workspace_rg.name
   sku                 = "PerGB2018"
-  retention_in_days   = 7
+  retention_in_days   = 30
 }
 
 resource "azurerm_monitor_diagnostic_setting" "key_vault_logs" {
