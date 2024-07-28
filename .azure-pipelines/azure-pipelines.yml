@@ -35,20 +35,31 @@ stages:
         backendAzureRmKey: 'terraform.tfstate'
         workingDirectory: 'IaC'
 
-    - task: TerraformTaskV4@4
-      displayName: 'Terraform Plan'
-      inputs:
-        provider: 'azurerm'
-        command: 'plan'
-        workingDirectory: 'IaC'
-        environmentServiceNameAzureRM: 'ado_ml'
-    # - task: AzureCLI@2
+    # - task: TerraformTaskV4@4
+    #   displayName: 'Terraform Plan'
     #   inputs:
-    #     azureSubscription: 'ado_ml'
-    #     scriptType: 'bash'
+    #     provider: 'azurerm'
+    #     command: 'plan'
     #     workingDirectory: 'IaC'
-    #     scriptLocation: 'inlineScript'
-    #     inlineScript: 'terraform plan'
+    #     environmentServiceNameAzureRM: 'ado_ml'
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'ado_ml'
+        scriptType: 'bash'
+        workingDirectory: 'IaC'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          # Set environment variables for Terraform
+          export ARM_CLIENT_ID=$(az account show --query id -o tsv)
+          export ARM_CLIENT_SECRET=$(az account show --query password -o tsv)
+          export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+          export ARM_TENANT_ID=$(az account show --query tenantId -o tsv)
+          
+          # Initialize Terraform
+          terraform init
+          
+          # Run Terraform plan
+          terraform plan -out=tfplan
 
   - job: WaitForValidation
     displayName: 'Wait for validation'
