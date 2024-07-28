@@ -38,22 +38,13 @@ resource "azurerm_monitor_diagnostic_setting" "key_vault_logs" {
   log {
     category = "AuditEvent"
     enabled  = true
-
-    retention_policy {
-      enabled = true
-      days    = 7
-    }
   }
 
   metric {
     category = "AllMetrics"
     enabled  = true
-
-    retention_policy {
-      enabled = true
-      days    = 7
-    }
   }
+  
 }
 
 resource "azurerm_storage_account" "ml_workspace_storage" {
