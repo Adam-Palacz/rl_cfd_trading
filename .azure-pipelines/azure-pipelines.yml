@@ -8,6 +8,10 @@ parameters:
     type: boolean
     default: false
 
+  - name: destroyMLWorkspace
+    type: boolean
+    default: false
+
 variables:
   - group: terraform-backend-config
 
@@ -35,13 +39,7 @@ stages:
         backendAzureRmKey: 'terraform.tfstate'
         workingDirectory: 'IaC'
 
-    # - task: TerraformTaskV4@4
-    #   displayName: 'Terraform Plan'
-    #   inputs:
-    #     provider: 'azurerm'
-    #     command: 'plan'
-    #     workingDirectory: 'IaC'
-    #     environmentServiceNameAzureRM: 'ado_ml'
+
     - task: TerraformTaskV4@4
       displayName: 'Terraform Plan'
       inputs:
@@ -50,10 +48,10 @@ stages:
         workingDirectory: 'IaC'
         environmentServiceNameAzureRM: 'ado_ml'
         commandOptions: >-
-          -var="arm_client_id=$(ARM_CLIENT_ID)"
-          -var="arm_client_secret=$(ARM_CLIENT_SECRET)"
-          -var="arm_tenant_id=$(ARM_TENANT_ID)"
-          -var="arm_subscription_id=$(ARM_SUBSCRIPTION_ID)"
+          -var="ARM_CLIENT_ID=$(ARM_CLIENT_ID)"
+          -var="ARM_CLIENT_SECRET=$(ARM_CLIENT_SECRET)"
+          -var="ARM_TENANT_ID=$(ARM_TENANT_ID)"
+          -var="ARM_SUBSCRIPTION_ID=$(ARM_SUBSCRIPTION_ID)"
 
   - job: WaitForValidation
     displayName: 'Wait for validation'
@@ -85,7 +83,30 @@ stages:
         workingDirectory: 'IaC'
         environmentServiceNameAzureRM: 'ado_ml'
         commandOptions: >-
-          -var="arm_client_id=$(ARM_CLIENT_ID)"
-          -var="arm_client_secret=$(ARM_CLIENT_SECRET)"
-          -var="arm_tenant_id=$(ARM_TENANT_ID)"
-          -var="arm_subscription_id=$(ARM_SUBSCRIPTION_ID)"
+          -var="ARM_CLIENT_ID=$(ARM_CLIENT_ID)"
+          -var="ARM_CLIENT_SECRET=$(ARM_CLIENT_SECRET)"
+          -var="ARM_TENANT_ID=$(ARM_TENANT_ID)"
+          -var="ARM_SUBSCRIPTION_ID=$(ARM_SUBSCRIPTION_ID)"
+    
+# - stage: DestroyInfra
+#   condition: ${{ parameters.destroyMLWorkspace }}
+#   jobs:
+#   - job: DestroyIfrastructure
+#     pool:
+#       vmImage: 'ubuntu-latest'
+#     steps:
+#     - task: TerraformInstaller@0
+#       inputs:
+#         terraformVersion: 'latest'
+    
+#     - task: TerraformTaskV4@4
+#       displayName: "Terraform Init"
+#       inputs:
+#         provider: 'azurerm'
+#         command: 'init'
+#         backendServiceArm: 'ado_ml'
+#         backendAzureRmResourceGroupName: '$(backend_resource_group_name)'
+#         backendAzureRmStorageAccountName: '$(backend_storage_account_name)'
+#         backendAzureRmContainerName: '$(backend_container_name)'
+#         backendAzureRmKey: 'terraform.tfstate'
+#         workingDirectory: 'IaC'
