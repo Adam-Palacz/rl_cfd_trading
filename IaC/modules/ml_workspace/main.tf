@@ -20,6 +20,11 @@ resource "azurerm_key_vault" "ml_workspace_kv" {
   resource_group_name = azurerm_resource_group.ml_workspace_rg.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
   sku_name            = var.key_vault_sku_name
+
+  logging {
+    enabled          = true
+    retention_days   = 7
+  }
 }
 
 resource "azurerm_storage_account" "ml_workspace_storage" {
