@@ -50,7 +50,7 @@ stages:
           export ARM_CLIENT_SECRET='$(ARM_CLIENT_SECRET)'
           export ARM_TENANT_ID='$(ARM_TENANT_ID)'
           export ARM_SUBSCRIPTION_ID='$(ARM_SUBSCRIPTION_ID)' 
-              
+          
           terraform plan
 
   - job: Checkov/Terrascan
@@ -69,7 +69,7 @@ stages:
       curl -L "$(curl -s https://api.github.com/repos/accurics/terrascan/releases/latest | grep -o -E "https://.+?_Linux_x86_64.tar.gz")" > terrascan.tar.gz
       tar -xf terrascan.tar.gz terrascan && rm terrascan.tar.gz
       sudo mv terrascan /usr/local/bin/terrascan
-      terrascan scan -d $(System.DefaultWorkingDirectory)
+      terrascan scan -d $(System.DefaultWorkingDirectory)/IaC
     displayName: 'Run Terrascan'
 
     - script: |
@@ -171,7 +171,7 @@ stages:
     displayName: 'Wait for validation'
     pool: server
     dependsOn: 
-      - BuildInfrastructure
+      - DestroyInfrastructure
     timeoutInMinutes: 1440
 
     steps:
