@@ -31,8 +31,8 @@ resource "azurerm_log_analytics_workspace" "kv_ml_workspace_la" {
 }
 
 resource "azurerm_monitor_diagnostic_setting" "key_vault_logs" {
-  name               = "key-vault-logs"
-  target_resource_id = azurerm_key_vault.ml_workspace_kv.id
+  name                       = "key-vault-logs"
+  target_resource_id         = azurerm_key_vault.ml_workspace_kv.id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.kv_ml_workspace_la.id
 
   log {
@@ -62,6 +62,15 @@ resource "azurerm_storage_account" "ml_workspace_storage" {
   location                 = azurerm_resource_group.ml_workspace_rg.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+  min_tls_version          = "TLS1_2"
+  # network_rules {
+  #   default_action = "Deny"
+  #   ip_rules       = []
+  #   virtual_network_subnet_ids = []
+  # }
+  sas_policy {
+    expiration_period = "P30D"
+  }
 }
 
 resource "azurerm_machine_learning_workspace" "ml_workspace" {
