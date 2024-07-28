@@ -79,17 +79,32 @@ stages:
     condition: and(succeeded('BuildInfrastructure'), succeeded('WaitForValidation'))
     steps:
     - task: TerraformTaskV4@4
+      displayName: "Terraform Init"
       inputs:
         provider: 'azurerm'
-        command: 'apply'
+        command: 'init'
+        backendServiceArm: 'ado_ml'
+        backendAzureRmResourceGroupName: '$(backend_resource_group_name)'
+        backendAzureRmStorageAccountName: '$(backend_storage_account_name)'
+        backendAzureRmContainerName: '$(backend_container_name)'
+        backendAzureRmKey: 'terraform.tfstate'
         workingDirectory: 'IaC'
-        environmentServiceNameAzureRM: 'ado_ml'
-        commandOptions: >-
-          -var="ARM_CLIENT_ID=$(ARM_CLIENT_ID)"
-          -var="ARM_CLIENT_SECRET=$(ARM_CLIENT_SECRET)"
-          -var="ARM_TENANT_ID=$(ARM_TENANT_ID)"
-          -var="ARM_SUBSCRIPTION_ID=$(ARM_SUBSCRIPTION_ID)"
-    
+
+
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'ado_ml'
+        scriptType: 'bash'
+        workingDirectory: 'IaC'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          export ARM_CLIENT_ID='$(ARM_CLIENT_ID)'
+          export ARM_CLIENT_SECRET='$(ARM_CLIENT_SECRET)'
+          export ARM_TENANT_ID='$(ARM_TENANT_ID)'
+          export ARM_SUBSCRIPTION_ID='$(ARM_SUBSCRIPTION_ID)' 
+              
+          # Run Terraform plan
+          terraform apply --auto-approve
 # - stage: DestroyInfra
 #   condition: ${{ parameters.destroyMLWorkspace }}
 #   jobs:
