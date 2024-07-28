@@ -53,11 +53,37 @@ stages:
               
           terraform plan
 
+  - job: Checkov/Terrascan
+    displayName: 'Terraform code analysis'
+    pool:
+      vmImage: 'ubuntu-latest'
+    dependsOn: 
+      - BuildInfrastructure
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.12'
+        addToPath: true
+        
+    - script: |
+      curl -L "$(curl -s https://api.github.com/repos/accurics/terrascan/releases/latest | grep -o -E "https://.+?_Linux_x86_64.tar.gz")" > terrascan.tar.gz
+      tar -xf terrascan.tar.gz terrascan && rm terrascan.tar.gz
+      sudo mv terrascan /usr/local/bin/terrascan
+      terrascan scan -d $(System.DefaultWorkingDirectory)
+    displayName: 'Run Terrascan'
+
+    - script: |
+      pip install checkov terrascan
+      checkov -d $(System.DefaultWorkingDirectory)/IaC -o cli
+    displayName: 'Run Checkov'
+
+
   - job: WaitForValidation
     displayName: 'Wait for validation'
     pool: server
     dependsOn: 
       - BuildInfrastructure
+      - Checkov/Terrascan
     timeoutInMinutes: 1440
 
     steps:
@@ -73,6 +99,7 @@ stages:
       vmImage: 'ubuntu-latest'
     dependsOn: 
       - BuildInfrastructure
+      - Checkov/Terrascan
       - WaitForValidation
     condition: and(succeeded('BuildInfrastructure'), succeeded('WaitForValidation'))
     steps:
