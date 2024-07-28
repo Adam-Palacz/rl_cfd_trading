@@ -28,6 +28,11 @@ variable "key_vault_sku_name" {
   type        = string
 }
 
+variable "storage_account_name" {
+  description = "Name of the Storage Account"
+  type        = string
+}
+
 variable "machine_learning_workspace_sku_name" {
   description = "SKU name for the Machine Learning Workspace"
   type        = string

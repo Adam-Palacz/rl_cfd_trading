@@ -4,6 +4,7 @@ module "ml_workspace" {
   location                            = var.location
   application_insights_name           = var.application_insights_name
   key_vault_name                      = var.key_vault_name
+  storage_account_name                = var.storage_account_name
   machine_learning_workspace_name     = var.machine_learning_workspace_name
   key_vault_sku_name                  = var.key_vault_sku_name
   machine_learning_workspace_sku_name = var.machine_learning_workspace_sku_name
