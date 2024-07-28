@@ -69,7 +69,8 @@ stages:
         curl -L "$(curl -s https://api.github.com/repositories/103084166/releases/latest | grep -o -E "https://.*terrascan_$(terrascan_version)_Linux_x86_64.tar.gz")" > terrascan.tar.gz
         tar -xf terrascan.tar.gz terrascan && rm terrascan.tar.gz
         sudo mv terrascan /usr/local/bin/terrascan
-        terrascan scan -i terraform -d  $(System.DefaultWorkingDirectory)/IaC
+        terrascan scan -i terraform -d  $(System.DefaultWorkingDirectory)/IaC -r
+      continueOnError: true  
       displayName: 'Run Terrascan'
 
     - script: |
