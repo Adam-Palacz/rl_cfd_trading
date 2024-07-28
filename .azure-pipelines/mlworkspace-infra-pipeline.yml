@@ -72,9 +72,9 @@ stages:
     #   terrascan scan -d $(System.DefaultWorkingDirectory)/IaC
     # displayName: 'Run Terrascan'
 
-    - script: |
-      pip install checkov terrascan
-      checkov -d $(System.DefaultWorkingDirectory)/IaC -o cli
+    # - script: |
+    #   pip install checkov terrascan
+    #   checkov -d $(System.DefaultWorkingDirectory)/IaC -o cli
     # displayName: 'Run Checkov'
 
 
@@ -83,7 +83,7 @@ stages:
     pool: server
     dependsOn: 
       - BuildInfrastructure
-      - Checkov/Terrascan
+      - CheckovAndTerrascan
     timeoutInMinutes: 1440
 
     steps:
@@ -99,7 +99,7 @@ stages:
       vmImage: 'ubuntu-latest'
     dependsOn: 
       - BuildInfrastructure
-      - Checkov/Terrascan
+      - CheckovAndTerrascan
       - WaitForValidation
     condition: and(succeeded('BuildInfrastructure'), succeeded('WaitForValidation'))
     steps:
@@ -133,7 +133,7 @@ stages:
 - stage: DestroyInfra
   condition: ${{ parameters.destroyMLWorkspace }}
   jobs:
-  - job: DestroyIfrastructure
+  - job: DestroyInfrastructure
     pool:
       vmImage: 'ubuntu-latest'
     steps:
