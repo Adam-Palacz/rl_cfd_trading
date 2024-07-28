@@ -35,13 +35,19 @@ stages:
         backendAzureRmKey: 'terraform.tfstate'
         workingDirectory: 'IaC'
 
-    - task: TerraformTaskV4@4
-      displayName: 'Terraform Plan'
+    # - task: TerraformTaskV4@4
+    #   displayName: 'Terraform Plan'
+    #   inputs:
+    #     provider: 'azurerm'
+    #     command: 'plan'
+    #     workingDirectory: 'IaC'
+    #     environmentServiceNameAzureRM: 'ado_ml'
+    - task: AzureCLI@2
       inputs:
-        provider: 'azurerm'
-        command: 'plan'
-        workingDirectory: 'IaC'
-        environmentServiceNameAzureRM: 'ado_ml'
+        azureSubscription: 'ado_ml'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: 'terraform plan'
 
   - job: WaitForValidation
     displayName: 'Wait for validation'
